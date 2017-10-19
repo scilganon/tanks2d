@@ -76,6 +76,16 @@ require([
             render.update();
         }, 100);
 
+        let fire = _.throttle((player) => {
+            firing.fire(player, (shell)=> {
+                render.register(shell, {
+                    backgroundColor: 'red',
+                    width: field.dom.style.cell.size,
+                    height: field.dom.style.cell.size
+                });
+            });
+        }, 200);
+
         // controls
         document.addEventListener('keydown', (e) => {
             /** @var {Player} **/
@@ -89,13 +99,7 @@ require([
             }
 
             if(/Space/gi.test(e.code)){
-                firing.fire(player, (shell)=> {
-                    render.register(shell, {
-                        backgroundColor: 'red',
-                        width: field.dom.style.cell.size,
-                        height: field.dom.style.cell.size
-                    });
-                });
+                fire(player);
             }
     });
 });

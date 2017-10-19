@@ -32,7 +32,7 @@ define([
 
                 let targetShell = this.hasCollision(newPos);
                 if(hasCollisionsCb(newPos, shell.player) || targetShell){
-                    this.killShell(targetShell);
+                    targetShell && this.killShell(targetShell);
                     this.killShell(shell);
                     shell.movement.rollback();
                     toRemoveList.push(shell, targetShell);
