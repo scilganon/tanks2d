@@ -5,7 +5,7 @@ define(function(require){
     NetworkService
         .connect()
         .then(() => NetworkService.sync(EVENTS_ENUM.NEWUSER, {
-            name: 'player'
+            name: 'player'+Date.now()
         }))
         .then(() => require('./game'));
 });

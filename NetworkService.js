@@ -1,7 +1,9 @@
 define([
+    './node_modules/js-cookie/src/js.cookie',
     './node_modules/axios/dist/axios'
-], function(axios){
+], function(Cookie, axios){
     var connection;
+    var connId = Cookie.get('ci');
 
     const config = {
         sse: 'http://localhost:8080/sse',
@@ -9,13 +11,31 @@ define([
     };
 
     return {
-        connect(){
-            return new Promise((resolve, reject) => {
-                connection = new EventSource(config.sse);
+        validateConnectionId(){
+            let promise;
 
-                connection.addEventListener('open', () => resolve());
-                connection.addEventListener('error', () => reject());
-            });
+            if(!connId){
+               promise = axios.get('/config').then(({data}) => {
+                   connId = data.uuid;
+                   Cookie.set('ci', connId);
+               })
+            } else {
+                promise = Promise.resolve(connId);
+            }
+
+            return promise;
+        },
+
+        connect(){
+            return this.validateConnectionId()
+                .then(() => {
+                    return new Promise((resolve, reject) => {
+                        connection = new EventSource(config.sse);
+
+                        connection.addEventListener('open', () => resolve());
+                        connection.addEventListener('error', () => reject());
+                    })
+                });
         },
         subscribe(event, cb){
             if(!connection){

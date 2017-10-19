@@ -17,28 +17,57 @@ app.use(bodyParser.json());
 
 
 var _ = require('lodash');
+var cookie = require('cookie');
 
-let users = [];
+let users = new Map();
 let blocks = new Map();
-let gConnection = {
-    _connection: null,
+let connectionPull = {
+    _connections: new Map(),
+
+    add(connection){
+        const id = cookie.parse(connection.req.headers.cookie).ci;
+
+        this._connections.set(id, connection);
+    },
+
+    remove(connection){
+        const id = cookie.parse(connection.req.headers.cookie).ci;
+
+        this._connections.delete(id);
+    },
+
     send(event, data){
         if(data instanceof Object){
             data = JSON.stringify(data);
         }
 
-        this._connection.send(event, data);
+        this._connections.forEach((conn) => {
+            conn.send(event, data);
+        });
     }
 };
+
+var uuid = require('uuid/v1');
+
+app.get('/config', function(req, res){
+    res.json({
+        uuid: uuid()
+    }).end();
+});
 
 app.post('/event', function(req, res){
     var data = req.body.data;
 
     switch(req.body.event){
         case 'newuser':
+            if(users.has(data.name)){
+                res.status(500).send('user already exists with such name');
+                return;
+            }
+
             res.end();
-            users.push(data);
-            gConnection.send('newuser', data);
+            users.set(data.name, data);
+            connectionPull.send('newuser', data);
             break;
         case 'move':
             _.find(blocks, {
@@ -60,9 +89,10 @@ var sse = new SSE(server)
 sse.on('connection', function (connection) {
     console.log('new connection');
 
-    gConnection._connection = connection;
+    connectionPull.add(connection);
 
     connection.on('close', function () {
-        console.log('lost connection')
+        console.log('lost connection');
+        connectionPull.remove(this);
     })
 })
