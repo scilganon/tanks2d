@@ -1,6 +1,6 @@
 define([
     './Player',
-    './CollisionService'
+    './CollisionService',
 ], function({Player, STATUSES}, CollisionService){
     class PlayerCollection {
 
@@ -9,7 +9,10 @@ define([
         }
 
         add(name = 'player'){
-            this.list.push(new Player(name));
+            /** @var Player **/
+            let entity = new Player();
+            entity.setName(name);
+            this.list.push(entity);
         }
 
         init(connectorCb){

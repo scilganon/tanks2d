@@ -1,11 +1,11 @@
 define([
-    './BaseBlock'
-],function ({BaseBlock}) {
+    './Barrier'
+],function ({Barrier}) {
     class BlocksCollection {
 
         constructor() {
             this.list = [
-                new BaseBlock()
+                new Barrier()
             ];
         }
 

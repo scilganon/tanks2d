@@ -1,6 +1,7 @@
 define([
+    './node_modules/lodash/lodash',
     './Position'
-],function (Position) {
+],function (_, Position) {
     const DIRECTIONS = {
         UP: 'UP',
         DOWN: 'DOWN',
@@ -16,6 +17,7 @@ define([
 
             this.position = new Position();
             this.newPosition = null;
+            this.id = _.uniqueId();
         }
 
         move(dir){

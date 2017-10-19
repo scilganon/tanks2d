@@ -1,17 +1,26 @@
 define([
-    './BaseMovement'
-],function ({BaseMovement}) {
+    './BaseBlock',
+],function ({BaseBlock}) {
     const STATUSES = {
         ALIVE: 'alive',
         DEAD: 'dead'
     };
 
-    class Player {
-        constructor(name, color = '#000') {
-                this.status = STATUSES.ALIVE;
-                this.color = color;
-                this.name = name;
-                this.movement = new BaseMovement();
+    class Player extends BaseBlock{
+        constructor() {
+            super();
+
+            this.status = STATUSES.ALIVE;
+            this.color = '#000';
+            this.name = 'player';
+        }
+
+        setColor(val){
+            this.color = val;
+        }
+
+        setName(val){
+            this.name = val;
         }
 
         move(dir, hasCollisionsCb){

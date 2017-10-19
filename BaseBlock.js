@@ -3,11 +3,8 @@ define([
 ], function({BaseMovement}){
     class BaseBlock {
 
-        constructor(color) {
+        constructor() {
             this.movement = new BaseMovement();
-
-            this.movement.position.x = 1;
-            this.movement.position.y = 1;
         }
     }
 

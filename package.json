@@ -9,7 +9,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.16.2",
+    "bottlejs": "^1.6.1",
+    "eventsource": "^1.0.5",
+    "express": "^4.16.2",
     "lodash": "^4.17.4",
     "requirejs": "^2.3.5",
+    "sse": "0.0.6"
   }
 }
