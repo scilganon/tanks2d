@@ -5,9 +5,6 @@ define([
 
         constructor(color) {
             super(color);
-
-            this.movement.position.x = 1;
-            this.movement.position.y = 1;
         }
     }
 

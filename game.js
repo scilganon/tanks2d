@@ -3,42 +3,27 @@
 require([
     './node_modules/lodash/lodash',
     './Field',
-    './PlayerCollection',
-    './BlocksCollection',
-    './BulletService',
-    './DOMRender',
-    './BaseMovement'
+    './DIContainer'
 ],
     /**
      * @param _
      * @param {Field} field
-     * @param PlayerCollection
-     * @param BlocksCollection
-     * @param BulletService
-     * @param DOMRender
-     * @param BaseMovement
-     * @param {BulletService} firing
+     * @param DIContainer
      */
-    function(_, field, {PlayerCollection}, {BlocksCollection}, {BulletService}, {DOMRender}, {BaseMovement}){
-        //tricks
-        BaseMovement.field = field;
-
-        //init
+    function(_, field, DIContainer){
         /** @var PlayerCollection **/
-        let players = new PlayerCollection();
-
-        players.add('Max');
+        let players = DIContainer.get('PlayerCollection');
 
         /** @var BlocksCollection **/
-        let blocks = new BlocksCollection();
+        let blocks = DIContainer.get('BlocksCollection');
 
         /** @var BulletService **/
-        let firing = new BulletService();
+        let firing = DIContainer.get('BulletService');
 
         /** @var DOMRender **/
-        let render = new DOMRender(field);
+        let render = DIContainer.get('DOMRender');
 
-        // game
+        // init
         field.init();
         players.init((player) => {
             render.register(player, {
@@ -47,15 +32,6 @@ require([
                 height: field.dom.style.cell.size
             });
         });
-        blocks.init((block) => {
-            render.register(block, {
-                backgroundColor: '#ccc',
-                width: field.dom.style.cell.size,
-                height: field.dom.style.cell.size
-            })
-        });
-
-        firing.init(players);
 
         //run
         setInterval(() => {

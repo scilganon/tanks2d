@@ -1,13 +1,48 @@
 define([
+    './PlayerCollection',
+    './BlocksCollection',
+    './BulletService',
+    './DOMRender',
+    './BaseMovement',
     './node_modules/bottlejs/dist/bottle',
-    './Player'
-], function(Bottle){
+    './Field',
+], function({PlayerCollection}, {BlocksCollection}, {BulletService}, {DOMRender}, {BaseMovement}, Bottle, Field){
     /** @var Bottle **/
     let container = new Bottle();
 
-    container.service('Player', function(){
+    //simple mapping
+    container.value('field', Field);
 
+
+    //normal
+    container.service(PlayerCollection.name, function(){
+        return new PlayerCollection();
     });
 
-    return container();
+    container.service(BlocksCollection.name, function(){
+        return new BlocksCollection();
+    });
+
+    container.service(BulletService.name, function(players){
+        let service = new BulletService();
+
+        service.init(players);
+
+        return service;
+    }, PlayerCollection.name);
+
+
+    container.service(DOMRender.name, function(field){
+        return new DOMRender(field);
+    }, 'field');
+
+    //tricks
+    BaseMovement.field = field;
+
+    return {
+        container,
+        get(name){
+            return container.container[name];
+        }
+    };
 });

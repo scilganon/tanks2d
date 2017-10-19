@@ -4,9 +4,18 @@ define([
     class BlocksCollection {
 
         constructor() {
-            this.list = [
-                new Barrier()
-            ];
+            this.list = [];
+        }
+
+        clear(){
+            this.list = [];
+        }
+
+        add(x,y){
+            /** @var Barrier **/
+            let entity = new Barrier();
+            this.list.push(entity);
+            entity.setPosition(x,y);
         }
 
         hasCollision(pos){

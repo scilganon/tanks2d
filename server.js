@@ -39,6 +39,8 @@ let connectionPull = {
     send(event, data){
         if(data instanceof Object){
             data = JSON.stringify(data);
+        } else {
+            data = '' + data;
         }
 
         this._connections.forEach((conn) => {
@@ -47,13 +49,39 @@ let connectionPull = {
     }
 };
 
+var config = {
+    size: 10
+};
+
 var uuid = require('uuid/v1');
 
 app.get('/config', function(req, res){
-    res.json({
+    res.json(Object.assign({
         uuid: uuid()
-    }).end();
+    }, config)).end();
 });
+
+function createBlock(x,y){
+    return {
+        x,
+        y,
+        id: _.uniqueId('block_')
+    };
+}
+
+function createState(){
+    return {
+        created_at: Date.now(),
+        start: {
+            x: 0,
+            y: 0
+        },
+        blocks: [
+            createBlock(1,1),
+            createBlock(1,2)
+        ]
+    };
+}
 
 app.post('/event', function(req, res){
     var data = req.body.data;
@@ -74,6 +102,14 @@ app.post('/event', function(req, res){
                 id: data.id
             }).merge(data);
             res.end();
+            break;
+        case 'start':
+            let state = createState();
+            connectionPull.send('prepare', state);
+            setTimeout(function(){
+                connectionPull.send('start', state.created_at);
+                state = null;
+            }, 1500);
             break;
         default:
             res.status(500).send('unknown event');
