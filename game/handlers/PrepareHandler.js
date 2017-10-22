@@ -1,6 +1,7 @@
 define([
-    '../DIContainer'
-], function(DIContainer){
+    '../DIContainer',
+    '../UserService'
+], function(DIContainer, UserService){
     return {
         handle(state){
             /** @var BlocksCollection **/
@@ -18,6 +19,8 @@ define([
                     height: 30
                 })
             });
+
+            UserService;
 
             /** @var PlayerCollection **/
             let players = DIContainer.get('PlayerCollection');

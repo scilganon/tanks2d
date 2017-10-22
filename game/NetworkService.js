@@ -11,19 +11,22 @@ define([
     };
 
     return {
+        /**
+         * @private
+         * @returns {Promise}
+         */
         validateConnectionId(){
-            let promise;
+            return new Promise((resolve, reject) => {
+                if(connId){
+                    return resolve(connId);
+                }
 
-            if(!connId){
-               promise = axios.get('/config').then(({data}) => {
-                   connId = data.uuid;
-                   Cookie.set('ci', connId);
-               })
-            } else {
-                promise = Promise.resolve(connId);
-            }
-
-            return promise;
+                axios.get('/config').then(({data}) => {
+                    connId = data.uuid;
+                    Cookie.set('ci', connId);
+                    resolve()
+                }).catch(() => reject())
+            });
         },
 
         connect(){
@@ -42,7 +45,9 @@ define([
                 throw new Error('connection is not established');
             }
 
-            return connection.addEventListener(event, cb);
+            return connection.addEventListener(event, (msg) => {
+                return cb(JSON.parse(msg.data), msg);
+            });
         },
         sync(event, data){
             return axios.post(config.events, {

@@ -37,6 +37,14 @@ define([
             player.status = STATUSES.DEAD;
             render.unregister(player);
         }
+
+        findById(id){
+            return this.list.find((player) => player.id === id);
+        }
+
+        find(){
+            return this.list.find.apply(this.list, arguments);
+        }
     }
 
     return {

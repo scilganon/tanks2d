@@ -1,3 +1,4 @@
 define({
-    NEWUSER: 'newuser'
+    NEWUSER: 'newuser',
+    MOVE: 'move'
 });

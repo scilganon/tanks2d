@@ -19,15 +19,26 @@ app.use(bodyParser.json());
 var _ = require('lodash');
 var cookie = require('cookie');
 
-let users = new Map();
-users.toArray = function(){
-    let result = [];
-    this.forEach((user) => result.push(user));
+let users = {
+    list: new Map(),
+    add(connection, user){
+        this.list.set(connection, user);
+    },
 
-    return result
+    toArray(){
+        let result = [];
+        this.list.forEach((user) => result.push(user));
+
+        return result
+    },
+
+    remove(connection){
+        const id = cookie.parse(connection.req.headers.cookie).ci;
+
+        this.list.delete(id);
+    },
 };
 
-let blocks = new Map();
 let connectionPull = {
     _connections: new Map(),
 
@@ -53,6 +64,10 @@ let connectionPull = {
         this._connections.forEach((conn) => {
             conn.send(event, data);
         });
+    },
+
+    getById(id){
+        return this._connections.get(id);
     }
 };
 
@@ -93,22 +108,21 @@ function createState(users){
 
 app.post('/event', function(req, res){
     var data = req.body.data;
+    var id = cookie.parse(req.headers.cookie).ci;
 
     switch(req.body.event){
         case 'newuser':
-            if(users.has(data.name)){
+            if(users.toArray().find((user) => user.id === data.id)){
                 res.status(500).send('user already exists with such name');
                 return;
             }
 
             res.end();
-            users.set(data.id, data);
+            users.add(id, data);
             connectionPull.send('newuser', data);
             break;
         case 'move':
-            _.find(blocks, {
-                id: data.id
-            }).merge(data);
+            connectionPull.send('move', data);
             res.end();
             break;
         case 'start':
@@ -140,6 +154,10 @@ sse.on('connection', function (connection) {
 
     connection.on('close', function () {
         console.log('lost connection');
+
+        users.remove(this);
+
+
         connectionPull.remove(this);
     })
 })

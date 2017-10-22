@@ -7,7 +7,7 @@ define([
     };
 
     class Player extends BaseBlock{
-        constructor(id) {
+        constructor() {
             super();
 
             this.id = Date.now();
