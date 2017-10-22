@@ -8,7 +8,7 @@ define(function(require){
     };
 
     if(localStorage.hasOwnProperty('isMaster')){
-        setTimeout(() => NetworkService.sync('start'), 2000);
+        setTimeout(() => NetworkService.sync('start'), 1000);
     }
 
     NetworkService

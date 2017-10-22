@@ -1,7 +1,8 @@
 define([
     './Shell',
-    './CollisionService'
-], function({Shell}, CollisionService){
+    './CollisionService',
+    './BaseMovement'
+], function({Shell}, CollisionService, {BaseMovement}){
 
     class BulletService {
 
@@ -48,20 +49,44 @@ define([
             this._list.get(shell.player).delete(shell);
 
         }
-        fire(player, connectorCb){
-            if(!player.movement.direction){
+
+        /**
+         * @param player
+         * @param direction
+         * @param connectorCb
+         * @returns {Shell|null}
+         */
+        fire(player, direction, connectorCb){
+            if(!direction){
                 console.warn('unknown direction to fire');
                 return;
             }
 
-            let shell = new Shell(player);
+            /** @var Shell **/
+            let shell = new Shell();
+            shell.setPlayer(player);
+            shell.movement = BaseMovement.clone(player.movement);
 
-           connectorCb(shell);
+            connectorCb(shell);
 
             this._list.get(player).add(shell);
+
+            return shell;
         }
         hasCollision(pos){
             return CollisionService.hasCollision(this.getShells(), pos);
+        }
+
+        findById(id){
+            for(let userListShell of this._list.values()){
+                for(let bullet of userListShell){
+                    if(bullet.id === id){
+                        return bullet;
+                    }
+                }
+            }
+
+            return null;
         }
     }
 

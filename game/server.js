@@ -111,9 +111,17 @@ app.post('/event', function(req, res){
     var id = cookie.parse(req.headers.cookie).ci;
 
     switch(req.body.event){
+        case 'fire':
+            connectionPull.send('fire', data);
+            break;
+
         case 'kill':
             //@todo: check exact coords of clash bullet and player
-            connectionPull.send('kill', data);
+            //@todo: prevent unsync state for clients
+            //@todo: get delay based on network bandwidth & connection quality
+            setTimeout(() => {
+                connectionPull.send('check.kill', data);
+            }, 1000);
             res.end();
         case 'newuser':
             if(users.toArray().find((user) => user.id === data.id)){

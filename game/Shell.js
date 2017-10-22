@@ -1,14 +1,24 @@
 define([
-    './node_modules/lodash/lodash',
-    './BaseMovement'
-],function (_, {BaseMovement}) {
-    class Shell {
+    './BaseBlock'
+],function ({BaseBlock}) {
+    class Shell extends BaseBlock{
+
+        constructor() {
+            super();
+
+            this.id = Date.now();
+            this.player = null;
+        }
+
         /**
          * @param {Player} player
          */
-        constructor(player) {
+        setPlayer(player){
             this.player = player;
-            this.movement = BaseMovement.clone(player.movement);
+        }
+
+        setId(val){
+            this.id = val;
         }
     }
 

@@ -64,20 +64,36 @@ require([
             render.update();
         }, 100);
 
-        NetworkService.subscribe('kill', ({id}) => {
+        NetworkService.subscribe('check.kill', ({id}) => {
             let player = players.findById(id);
 
-            !player.isDead && kill(player);
+            if(!player.isDead){
+                throw new Error('too old game state - player is already killed');
+            }
         });
 
-        let fire = _.throttle((player) => {
-            firing.fire(player, (shell)=> {
+        let fire = (player, direction, shellId = null) => {
+            let shell = firing.fire(player, direction, (shell)=> {
                 render.register(shell, {
                     backgroundColor: 'red',
                     width: field.dom.style.cell.size,
                     height: field.dom.style.cell.size
                 });
             });
+
+            shellId && shell.setId(shellId);
+
+            return shell;
+        };
+
+        let nativeFire = _.throttle((player) => {
+            let shell = fire(player, player.movement.direction);
+
+            NetworkService.sync('fire', {
+                id: shell.id,
+                playerId: player.id,
+                direction: player.movement.direction
+            })
         }, 200);
 
         let move = function(player, direction){
@@ -103,7 +119,7 @@ require([
             }
 
             if(/Space/gi.test(e.code)){
-                fire(player);
+                nativeFire(player);
             }
         });
 
@@ -117,5 +133,11 @@ require([
             let player = players.findById(data.id);
 
             move(player, data.direction);
+        });
+
+        NetworkService.subscribe('fire', ({id, direction, playerId}) => {
+            if(!firing.findById(id)){
+                fire(players.findById(playerId), direction, id)
+            }
         });
 });
