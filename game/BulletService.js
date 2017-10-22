@@ -22,6 +22,7 @@ define([
         }
 
         init(players){
+            this._list.clear();
             players.list.forEach(function(player){
                 this._list.set(player, new Set());
             }.bind(this));

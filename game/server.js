@@ -136,6 +136,10 @@ app.post('/event', function(req, res){
             }, 1500);
             res.end();
             break;
+        case 'reset':
+            connectionPull.send('reset', {success: true});
+            res.end();
+            break;
         default:
             res.status(500).send('unknown event');
     }

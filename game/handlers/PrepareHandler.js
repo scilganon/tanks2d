@@ -1,7 +1,6 @@
 define([
     '../DIContainer',
-    '../UserService'
-], function(DIContainer, UserService){
+], function(DIContainer){
     return {
         handle(state){
             /** @var BlocksCollection **/
@@ -20,8 +19,6 @@ define([
                 })
             });
 
-            UserService;
-
             /** @var PlayerCollection **/
             let players = DIContainer.get('PlayerCollection');
 
@@ -38,6 +35,11 @@ define([
                     height: 30
                 });
             });
+
+            /** @var BulletService **/
+            let BulletService = DIContainer.get('BulletService');
+
+            BulletService.init(players);
         }
     };
 });

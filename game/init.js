@@ -3,9 +3,13 @@ define(function(require){
     const EVENTS_ENUM = require('./EVENTS_ENUM');
     const UserService = require('./UserService');
 
-    window.prepare = function(){
-        NetworkService.sync('start');
+    window.restart = function(){
+        NetworkService.sync('reset');
     };
+
+    if(localStorage.hasOwnProperty('isMaster')){
+        setTimeout(() => NetworkService.sync('start'), 2000);
+    }
 
     NetworkService
         .connect()
@@ -18,6 +22,8 @@ define(function(require){
 
             NetworkService.subscribe('prepare', (msg) => prepare.handle(msg));
             NetworkService.subscribe('start', (msg) => start.handle(msg));
+
+            NetworkService.subscribe('reset', ({data}) => window.location.reload())
         })
         .then(() =>  require(['./game']));
 });

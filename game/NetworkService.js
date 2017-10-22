@@ -54,6 +54,10 @@ define([
                 event,
                 data
             });
+        },
+
+        get id(){
+            return connId;
         }
     };
 });
