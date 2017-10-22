@@ -41,6 +41,10 @@ define([
 
             return true;
         }
+
+        get isDead(){
+            return this.status === STATUSES.DEAD;
+        }
     }
 
     return {

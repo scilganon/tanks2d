@@ -22,8 +22,13 @@ define([
                 connectorCb(player);
             });
         }
+
+        /**
+         * @param pos
+         * @returns {Player|null}
+         */
         hasCollision(pos){
-            return CollisionService.hasCollision(this.list, pos);
+            return CollisionService.hasCollision(this.getAlive(), pos);
         }
         getAlive(){
             return this.list.filter((player) => player.status === STATUSES.ALIVE);
@@ -36,6 +41,10 @@ define([
             player.status = STATUSES.DEAD;
         }
 
+        /**
+         * @param id
+         * @returns {Player|null}
+         */
         findById(id){
             return this.list.find((player) => player.id === id);
         }

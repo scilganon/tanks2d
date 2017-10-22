@@ -33,6 +33,14 @@ require([
         // init
         field.init();
 
+        /**
+         * @param {Player} player
+         */
+        let kill = function(player){
+            players.kill(player);
+            render.unregister(player);
+        };
+
         //run
         setInterval(() => {
             firing.process((pos, shooter) => {
@@ -43,8 +51,11 @@ require([
                 let player = players.hasCollision(pos);
 
                 if(player && player !== shooter){
-                    players.kill(player);
-                    render.unregister(player);
+                    kill(player);
+
+                    NetworkService.sync('kill', {
+                        id: player.id
+                    });
                     return true;
                 }
             }).forEach((shell) => {
@@ -52,6 +63,12 @@ require([
             });
             render.update();
         }, 100);
+
+        NetworkService.subscribe('kill', ({id}) => {
+            let player = players.findById(id);
+
+            !player.isDead && kill(player);
+        });
 
         let fire = _.throttle((player) => {
             firing.fire(player, (shell)=> {

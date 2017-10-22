@@ -33,10 +33,9 @@ define([
 
                 let targetShell = this.hasCollision(newPos);
                 if(hasCollisionsCb(newPos, shell.player) || targetShell){
-                    targetShell && this.killShell(targetShell);
-                    this.killShell(shell);
+                    targetShell && toRemoveList.push(targetShell);
+                    toRemoveList.push(shell);
                     shell.movement.rollback();
-                    toRemoveList.push(shell, targetShell);
                 } else {
                     shell.movement.commit();
                 }

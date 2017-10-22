@@ -111,6 +111,10 @@ app.post('/event', function(req, res){
     var id = cookie.parse(req.headers.cookie).ci;
 
     switch(req.body.event){
+        case 'kill':
+            //@todo: check exact coords of clash bullet and player
+            connectionPull.send('kill', data);
+            res.end();
         case 'newuser':
             if(users.toArray().find((user) => user.id === data.id)){
                 res.status(500).send('user already exists with such name');
