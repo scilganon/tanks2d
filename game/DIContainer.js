@@ -37,7 +37,7 @@ define([
     }, 'field');
 
     //tricks
-    BaseMovement.field = field;
+    BaseMovement.field = Field;
 
     return {
         container,

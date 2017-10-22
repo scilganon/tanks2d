@@ -1,6 +1,6 @@
 define([
     './node_modules/lodash/lodash',
-    './Position'
+    './Position',
 ],function (_, Position) {
     const DIRECTIONS = {
         UP: 'UP',
