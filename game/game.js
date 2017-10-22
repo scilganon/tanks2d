@@ -43,7 +43,8 @@ require([
                 let player = players.hasCollision(pos);
 
                 if(player && player !== shooter){
-                    players.kill(render, player);
+                    players.kill(player);
+                    render.unregister(player);
                     return true;
                 }
             }).forEach((shell) => {

@@ -30,12 +30,10 @@ define([
         }
 
         /**
-         * @param {DOMRender} render
          * @param {Player} player
          */
-        kill(render, player){
+        kill(player){
             player.status = STATUSES.DEAD;
-            render.unregister(player);
         }
 
         findById(id){
