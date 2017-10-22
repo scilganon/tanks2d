@@ -7,12 +7,17 @@ define([
     };
 
     class Player extends BaseBlock{
-        constructor() {
+        constructor(id) {
             super();
 
+            this.id = Date.now();
             this.status = STATUSES.ALIVE;
             this.color = '#000';
             this.name = 'player';
+        }
+
+        setId(val){
+            this.id = val;
         }
 
         setColor(val){

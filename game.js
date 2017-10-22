@@ -23,15 +23,9 @@ require([
         /** @var DOMRender **/
         let render = DIContainer.get('DOMRender');
 
+
         // init
         field.init();
-        players.init((player) => {
-            render.register(player, {
-                backgroundColor: player.color,
-                width: field.dom.style.cell.size,
-                height: field.dom.style.cell.size
-            });
-        });
 
         //run
         setInterval(() => {

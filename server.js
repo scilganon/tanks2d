@@ -20,6 +20,13 @@ var _ = require('lodash');
 var cookie = require('cookie');
 
 let users = new Map();
+users.toArray = function(){
+    let result = [];
+    this.forEach((user) => result.push(user));
+
+    return result
+};
+
 let blocks = new Map();
 let connectionPull = {
     _connections: new Map(),
@@ -69,7 +76,7 @@ function createBlock(x,y){
     };
 }
 
-function createState(){
+function createState(users){
     return {
         created_at: Date.now(),
         start: {
@@ -79,7 +86,8 @@ function createState(){
         blocks: [
             createBlock(1,1),
             createBlock(1,2)
-        ]
+        ],
+        users: users.toArray()
     };
 }
 
@@ -94,7 +102,7 @@ app.post('/event', function(req, res){
             }
 
             res.end();
-            users.set(data.name, data);
+            users.set(data.id, data);
             connectionPull.send('newuser', data);
             break;
         case 'move':
@@ -104,12 +112,15 @@ app.post('/event', function(req, res){
             res.end();
             break;
         case 'start':
-            let state = createState();
+            let state = createState(users);
             connectionPull.send('prepare', state);
             setTimeout(function(){
-                connectionPull.send('start', state.created_at);
+                connectionPull.send('start', {
+                    round: state.created_at
+                });
                 state = null;
             }, 1500);
+            res.end();
             break;
         default:
             res.status(500).send('unknown event');

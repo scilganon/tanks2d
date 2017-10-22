@@ -8,11 +8,13 @@ define([
             this.list = [];
         }
 
-        add(name = 'player'){
+        add(id, name = 'player'){
             /** @var Player **/
             let entity = new Player();
             entity.setName(name);
+            entity.setId(id);
             this.list.push(entity);
+            return entity;
         }
 
         init(connectorCb){
